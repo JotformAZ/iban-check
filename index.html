@@ -1,1 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>IBAN prüfen</title>
+  <style>
+    body { font-family: Arial; padding: 2em; }
+    input { padding: 0.5em; width: 300px; }
+    button { padding: 0.5em 1em; margin-left: 10px; }
+    .result { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>IBAN-Prüfung</h2>
+  <input type="text" id="iban" placeholder="DE89370400440532013000" />
+  <button onclick="checkIBAN()">Prüfen</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    function isValidIBAN(iban) {
+      iban = iban.toUpperCase().replace(/\s+/g, '');
+      if (!iban.match(/^[A-Z0-9]+$/)) return false;
+      iban = iban.slice(4) + iban.slice(0, 4);
+      iban = iban.replace(/[A-Z]/g, ch => ch.charCodeAt(0) - 55);
+      let remainder = iban;
+      while (remainder.length > 2) {
+        let block = remainder.slice(0, 9);
+        remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(block.length);
+      }
+      return parseInt(remainder, 10) % 97 === 1;
+    }
+
+    function checkIBAN() {
+      const iban = document.getElementById('iban').value;
+      const resultDiv = document.getElementById('result');
+      const valid = isValidIBAN(iban);
+      resultDiv.textContent = valid ? "✅ Gültige IBAN" : "❌ Ungültige IBAN";
+      resultDiv.style.color = valid ? "green" : "red";
+    }
+  </script>
+</body>
+</html>
 
