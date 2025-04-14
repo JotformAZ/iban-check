@@ -2,21 +2,49 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>IBAN prüfen</title>
+  <title>IBAN Prüfung</title>
   <style>
-    body { font-family: Arial; padding: 2em; }
-    input { padding: 0.5em; width: 300px; }
-    button { padding: 0.5em 1em; margin-left: 10px; }
-    .result { margin-top: 1em; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    input {
+      padding: 0.6em;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 0.6em 1.2em;
+      margin-top: 15px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 1.5em;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
   </style>
 </head>
 <body>
   <h2>IBAN-Prüfung</h2>
-  <input type="text" id="iban" placeholder="DE89370400440532013000" />
-  <button onclick="checkIBAN()">Prüfen</button>
+  <label for="iban">IBAN eingeben:</label>
+  <input type="text" id="iban" placeholder="z. B. DE89370400440532013000" />
+  <button onclick="checkIBAN()">IBAN prüfen</button>
   <div class="result" id="result"></div>
 
   <script>
+    // IBAN-Validierung (Modulo 97)
     function isValidIBAN(iban) {
       iban = iban.toUpperCase().replace(/\s+/g, '');
       if (!iban.match(/^[A-Z0-9]+$/)) return false;
@@ -30,6 +58,7 @@
       return parseInt(remainder, 10) % 97 === 1;
     }
 
+    // IBAN prüfen und Ergebnis anzeigen
     function checkIBAN() {
       const iban = document.getElementById('iban').value;
       const resultDiv = document.getElementById('result');
@@ -37,7 +66,14 @@
       resultDiv.textContent = valid ? "✅ Gültige IBAN" : "❌ Ungültige IBAN";
       resultDiv.style.color = valid ? "green" : "red";
     }
+
+    // Wenn IBAN aus URL kommt, automatisch prüfen
+    const urlParams = new URLSearchParams(window.location.search);
+    const ibanFromForm = urlParams.get('iban');
+    if (ibanFromForm) {
+      document.getElementById('iban').value = ibanFromForm;
+      checkIBAN();
+    }
   </script>
 </body>
 </html>
-
